@@ -1,0 +1,46 @@
+version: '3'
+services:
+  myapp-mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+    ports:
+      - "3306:3306"
+    networks:
+      - employee-mysql
+
+  myapp-8080:
+    build:
+      context: ./micro-a  # Reemplaza con la ruta a tu microservicio 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - myapp-mysql
+    environment:
+      - DATABASE_HOST=myapp-mysql
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=root
+      - DATABASE_NAME=test
+      - DATABASE_PORT=3306
+    networks:
+      - employee-mysql
+
+  myapp-8081:
+    build:
+      context: ./micro-b  # Reemplaza con la ruta a tu microservicio 8081
+    ports:
+      - "8081:8081"
+    depends_on:
+      - myapp-mysql
+    environment:
+      - DATABASE_HOST=myapp-mysql
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=root
+      - DATABASE_NAME=test
+      - DATABASE_PORT=3306
+    networks:
+      - employee-mysql
+
+networks:
+  employee-mysql:
